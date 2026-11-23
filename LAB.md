@@ -1,4 +1,4 @@
-# Docker lab (1 hour)
+# Docker lab
 
 Work on your own laptop, at your own pace. Each part ends with a **Done when** check: when it
 passes, move on. Parts 5 and 6 can be finished at home.
@@ -12,17 +12,17 @@ another program on your laptop, change the left number of `-p` (or of `ports:` i
 `-p 8001:5000` instead of `-p 8000:5000`, then open `localhost:8001`. The right number is the
 port inside the container and stays the same.
 
-| Part | Minutes | Topic |
-| ---- | ------- | ----- |
-| 0 | 5 | Setup |
-| 1 | 8 | Containers |
-| 2 | 12 | Images |
-| 3 | 10 | Registry |
-| 4 | 8 | Network by hand |
-| 5 | 15 | Compose |
-| 6 | extra | Fix it |
+| Part | Topic |
+| ---- | ----- |
+| 0 | Setup |
+| 1 | Containers |
+| 2 | Images |
+| 3 | Registry |
+| 4 | Network by hand |
+| 5 | Compose |
+| 6 | Fix it (extra) |
 
-## Part 0: Setup (5 min)
+## Part 0: Setup
 
 Install Docker if you don't have it yet (steps from Docker's documentation, not tested here):
 
@@ -53,7 +53,7 @@ docker pull redis:8-alpine
 
 **Done when** `docker run hello-world` prints `Hello from Docker!`.
 
-## Part 1: Containers (8 min)
+## Part 1: Containers
 
 1. Run nginx in the background on host port 8080, named `site`, and open `localhost:8080`.
 2. Change its page from inside the container: `docker exec` a command that writes a new
@@ -71,7 +71,7 @@ by default on Linux: keep the `site` folder somewhere under it, or you get `moun
 
 **Done when** editing your local `index.html` changes the page on reload, with no restart.
 
-## Part 2: Images (12 min)
+## Part 2: Images
 
 1. In `lab/counter/` write a `Dockerfile` for the app: base image `python:3.12-slim`, install
    `requirements.txt`, copy the code, start `python app.py`. The app listens on port 5000.
@@ -84,7 +84,7 @@ Commands you need: `docker build -t`, `docker run --rm -p`.
 **Done when** `localhost:8000` greets with your name, and the second build shows the
 `pip install` step as `CACHED`. If it isn't, look at the order of the `COPY` lines.
 
-## Part 3: Registry (10 min)
+## Part 3: Registry
 
 1. Create a GitHub personal access token (classic) with only the `write:packages` scope and a
    short expiry: <https://github.com/settings/tokens/new?scopes=write:packages>. Fine-grained
@@ -125,7 +125,7 @@ Commands you need: `docker build -t`, `docker run --rm -p`.
 **Done when** a classmate runs `docker run --rm -p 8000:5000 ghcr.io/USERNAME/counter:1.0` and
 sees your name.
 
-## Part 4: Network by hand (8 min)
+## Part 4: Network by hand
 
 1. Create a network called `lab-net`.
 2. Run Redis (`redis:8-alpine`) on it, named `cache`. Don't publish its port.
@@ -137,7 +137,7 @@ Commands you need: `docker network create`, `docker run --network ... -e ...`.
 
 **Done when** the counter increments on every refresh with `REDIS_HOST=cache`.
 
-## Part 5: Compose (15 min)
+## Part 5: Compose
 
 Clean up part 4 first (`docker rm -f` the two containers): they hold host port 8000.
 

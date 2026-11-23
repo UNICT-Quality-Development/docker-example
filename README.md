@@ -1,6 +1,6 @@
 ## Docker example
 
-This repository contains the examples for the Docker section of the Software Quality and Project Development course at the University of Catania: a small Flask app with its `Dockerfile`, a `compose.yaml` that adds a MySQL database and Adminer, the GitHub Actions workflow that builds and publishes the image, and a one-hour lab.
+This repository contains the examples for the Docker section of the Software Quality and Project Development course at the University of Catania: a small Flask app with its `Dockerfile`, a `compose.yaml` that adds a MySQL database and Adminer, the GitHub Actions workflow that builds and publishes the image, and a lab.
 
 | File                                   | What it is                                                         |
 | -------------------------------------- | ------------------------------------------------------------------ |
@@ -218,4 +218,4 @@ The same job also exists as a reusable workflow:
 
 ### Lab
 
-The one-hour lab is in [LAB.md](LAB.md).
+The lab is in [LAB.md](LAB.md).

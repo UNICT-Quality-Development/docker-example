@@ -1,0 +1,13 @@
+# ✅ This is good ✅
+# reused
+FROM python:3.12-slim
+# reused
+WORKDIR /app
+# requirements.txt unchanged → reused
+COPY requirements.txt .
+# reused
+RUN pip install -r requirements.txt
+# app.py changed → runs again (only copies files, fast)
+COPY . .
+EXPOSE 5000
+CMD ["python", "app.py"]

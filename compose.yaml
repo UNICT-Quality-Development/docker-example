@@ -1,0 +1,40 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:5000"
+    environment:
+      DATABASE_URL: mysql://user:pass@db:3306/app
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-net
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      interval: 5s
+      retries: 10
+    networks:
+      - app-net
+  adminer:
+    image: adminer:6.3.0
+    ports:
+      - "8081:8080"
+    networks:
+      - app-net
+# Optional: without this section
+# Compose creates a default network
+# and connects every service to it
+networks:
+  app-net:
+volumes:
+  db-data:

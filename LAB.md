@@ -3,8 +3,8 @@
 Work on your own laptop, at your own pace. Each part ends with a **Done when** check: when it
 passes, move on. Parts 5 and 6 can be finished at home.
 
-The counter app in `lab/counter/` is ready: you write only the `Dockerfile` and the
-`compose.yaml`. It greets with the `AUTHOR` environment variable and, when `REDIS_HOST` is set,
+The counter app in `lab/counter/` is ready: you write only the `Dockerfile`, a GitHub Actions
+workflow and the `compose.yaml`. It greets with the `AUTHOR` environment variable and, when `REDIS_HOST` is set,
 counts visits in Redis.
 
 **A host port is taken?** If Docker says `port is already allocated`, or the port is used by
@@ -86,43 +86,36 @@ Commands you need: `docker build -t`, `docker run --rm -p`.
 
 ## Part 3: Registry
 
-1. Create a GitHub personal access token (classic) with only the `write:packages` scope and a
-   short expiry: <https://github.com/settings/tokens/new?scopes=write:packages>. Fine-grained
-   tokens don't work with ghcr.io. Never paste the token in a file or a chat.
-2. Log in to `ghcr.io` with your GitHub username, passing the token on standard input:
+You don't log in to ghcr.io from your laptop, and you create no token: a GitHub Actions workflow
+builds the image and pushes it with `GITHUB_TOKEN`, a token GitHub creates for each job and that
+expires when the job ends.
 
-   ```
-   export TOKEN=YOUR_TOKEN
-   echo $TOKEN | docker login ghcr.io -u USERNAME --password-stdin
-   ```
+1. On GitHub, create a new repository named `counter` under your own account. Put the content of
+   `lab/counter/`, with your `Dockerfile`, at its root and push it to `main`.
+2. Add `.github/workflows/docker-publish.yml` to it: on every push to `main`, build the image for
+   both CPU types and push it as `ghcr.io/USERNAME/counter:1.0`. Start from
+   `.github/workflows/docker-publish.yml` of this repository and add:
+   - `docker/setup-qemu-action` and `docker/setup-buildx-action` before the build step;
+   - `platforms: linux/amd64,linux/arm64` and `tags: ghcr.io/USERNAME/counter:1.0` in
+     `docker/build-push-action`.
 
-   Windows PowerShell (not tested): `$env:TOKEN="YOUR_TOKEN"`, then
-   `$env:TOKEN | docker login ghcr.io -u USERNAME --password-stdin`.
-
-3. Build for both CPU types and push it as `ghcr.io/USERNAME/counter:1.0`, with
-   `docker buildx build --platform linux/amd64,linux/arm64 ... --push`.
+   Keep `permissions` with `contents: read` (for the checkout) and `packages: write` (for the
+   push). Without `packages: write` the push is denied.
 
    Type `USERNAME` in lowercase even if your GitHub name has capitals: Docker rejects
    `ghcr.io/SomeUser/counter:1.0` with `repository name (SomeUser/counter) must be lowercase`.
 
-   Why both platforms: an image built on an Apple Silicon Mac is arm64 only, and an x86 laptop
-   can't run it (`exec format error`). Docker Desktop builds both with no setup. On Docker Engine
-   for Linux without Docker Desktop, if the build fails, run these two commands once and try again
-   (not tested):
+   Why both platforms: an image built for x86 only doesn't run natively on an Apple Silicon Mac,
+   and one built for arm64 only fails on an x86 laptop with `exec format error`. The GitHub
+   runner is x86: QEMU emulates arm64, so that half of the build is slower.
 
-   ```
-   docker run --privileged --rm tonistiigi/binfmt --install all
-   docker buildx create --name multi --driver docker-container --use
-   ```
-
-   If that doesn't work either, or Docker Desktop says the multi-platform build is not supported,
-   push with `--platform linux/amd64` only: it runs on Windows and
-   Linux laptops, and Docker Desktop on Apple Silicon Macs runs it through emulation.
-
+3. Push the workflow, open the **Actions** tab of the repository and wait for the run to turn
+   green. If the run fails with `403` and a `counter` package already existed on your account,
+   that package isn't linked to this repository: open **Package settings**, **Manage Actions
+   access**, add the `counter` repository with the **Write** role and run the workflow again.
 4. On GitHub, open your profile, the **Packages** tab, then `counter`. A new package is private:
    open **Package settings**, and under **Danger Zone** use **Change visibility** to make it
    public.
-5. `docker logout ghcr.io`.
 
 **Done when** a classmate runs `docker run --rm -p 8000:5000 ghcr.io/USERNAME/counter:1.0` and
 sees your name.

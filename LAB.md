@@ -12,15 +12,15 @@ another program on your laptop, change the left number of `-p` (or of `ports:` i
 `-p 8001:5000` instead of `-p 8000:5000`, then open `localhost:8001`. The right number is the
 port inside the container and stays the same.
 
-| Part | Topic |
-| ---- | ----- |
-| 0 | Setup |
-| 1 | Containers |
-| 2 | Images |
-| 3 | Registry |
-| 4 | Network by hand |
-| 5 | Compose |
-| 6 | Fix it (extra) |
+| Part | Topic           |
+| ---- | --------------- |
+| 0    | Setup           |
+| 1    | Containers      |
+| 2    | Images          |
+| 3    | Registry        |
+| 4    | Network by hand |
+| 5    | Compose         |
+| 6    | Fix it (extra)  |
 
 ## Part 0: Setup
 
@@ -98,6 +98,7 @@ Commands you need: `docker build -t`, `docker run --rm -p`.
 
    Windows PowerShell (not tested): `$env:TOKEN="YOUR_TOKEN"`, then
    `$env:TOKEN | docker login ghcr.io -u USERNAME --password-stdin`.
+
 3. Build for both CPU types and push it as `ghcr.io/USERNAME/counter:1.0`, with
    `docker buildx build --platform linux/amd64,linux/arm64 ... --push`.
 
@@ -117,6 +118,7 @@ Commands you need: `docker build -t`, `docker run --rm -p`.
    If that doesn't work either, or Docker Desktop says the multi-platform build is not supported,
    push with `--platform linux/amd64` only: it runs on Windows and
    Linux laptops, and Docker Desktop on Apple Silicon Macs runs it through emulation.
+
 4. On GitHub, open your profile, the **Packages** tab, then `counter`. A new package is private:
    open **Package settings**, and under **Danger Zone** use **Change visibility** to make it
    public.
@@ -164,7 +166,7 @@ docker compose up -d
 curl localhost:8000
 ```
 
-## Part 6: Fix it (extra)
+## Part 6: Fix it
 
 Each folder in `lab/broken/` is a small setup that fails. Its `README.md` says what you see. Make
 it work, and say in one sentence what was wrong.
@@ -175,18 +177,3 @@ it work, and say in one sentence what was wrong.
 - `4-port-taken`
 
 **Done when** each one runs, and you can explain the cause.
-
-## Extra tasks and homework
-
-- Delete your `counter` package on GitHub (Package settings, Danger Zone, Delete this package).
-- Dockerize your own project, and check it against criterion 18 of the project review:
-  - a `Dockerfile` that builds and runs;
-  - dependencies installed before the code is copied;
-  - a `.dockerignore` that excludes `.git`, `.venv` and `.env`;
-  - no secrets in the image;
-  - a `compose.yaml` when there is more than one service.
-- Add a GitHub Action to your project that builds the image on every pull request.
-- Move the passwords of `compose.yaml` to a `.env` file (`${MYSQL_PASSWORD}` in `compose.yaml`),
-  keep `.env` out of git and of the image, and commit a `.env.example`.
-- Split the services of the example over two networks, and show that a name stops resolving when
-  two services share no network.
